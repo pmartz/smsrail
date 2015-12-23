@@ -5,8 +5,7 @@
 
 
 #include <Export.h>
-#include <Road.h>
-#include <Intersection.h>
+#include <types.h>
 
 
 /** \class Writer Writer.h
@@ -15,7 +14,6 @@ class SMSRAIL_EXPORT Writer
 {
 public:
     typedef enum {
-        OSG_WRITER,
         CSV_WRITER
     } WriterType;
 
@@ -26,16 +24,6 @@ public:
     static WriterPtr create( const WriterType writerType );
 
     WriterType getType() const;
-
-    virtual bool write( const RoadVec& roads, const std::string& fileName )
-    {
-        return( false );
-    }
-
-    virtual bool write( const IntersectionVec& roads, const std::string& fileName )
-    {
-        return( false );
-    }
 
 protected:
     WriterType _writerType;

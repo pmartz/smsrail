@@ -17,8 +17,6 @@ public:
     CSVWriter();
     virtual ~CSVWriter();
 
-    virtual bool write( const IntersectionVec& inter, const std::string& fileName );
-
 protected:
 };
 

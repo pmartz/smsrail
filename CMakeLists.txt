@@ -26,8 +26,10 @@ if( WIN32 AND MSVC )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
 
     set( CMAKE_DEBUG_POSTFIX d )
+else()
+    # Enable C++0x in gcc.
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x" )
 endif()
-
 
 
 #
@@ -79,8 +81,8 @@ enable_testing()
 
 
 set( _projectIncludes
-    ${CMAKE_SOURCE_DIR}/src/libsmsrail
-    ${PROJECT_SOURCE_DIR}/src
+    "${PROJECT_SOURCE_DIR}/src/libsmsrail"
+    "${PROJECT_SOURCE_DIR}/src"
 )
 
 set( _projectLibraries

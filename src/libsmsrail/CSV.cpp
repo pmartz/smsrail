@@ -1,8 +1,7 @@
 // Copyright
 
 
-#include "csv.h"
-#include "tsp.h"
+#include "CSV.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -17,9 +16,7 @@ CSV::CSV( const std::string& inFile )
     {
         if( !( load( inFile ) ) )
         {
-            // Attempt to load as a TSP.
-            TSP tsp( inFile );
-            load( tsp );
+            // Display error.
         }
     }
 }
@@ -284,23 +281,3 @@ void CSV::tokenize( StringSimpleVec& result, const std::string& line )
     }
 }
 
-
-bool CSV::load( const TSP& tsp )
-{
-    const unsigned int dim( tsp.getDim() );
-    if( dim == 0 )
-        return( false );
-
-    reset();
-
-    _cols = _rows = dim;
-    _colLabels.resize( dim );
-    _rowLabels.resize( dim );
-    _data.resize( dim );
-    for( unsigned int idx=0; idx < dim; ++idx )
-    {
-        _data[ idx ] = tsp.getRow( idx );
-    }
-
-    return( true );
-}

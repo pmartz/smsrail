@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 
-// Forward
-class TSP;
 
 typedef std::vector< DoubleSimpleVec > DataArray;
 
@@ -53,7 +51,6 @@ public:
 
 protected:
     bool load( const std::string& inFile );
-    bool load( const TSP& tsp );
 
     void tokenize( StringSimpleVec& result, const std::string& line );
 

@@ -2,10 +2,8 @@
 
 
 #include "Writer.h"
-#ifdef OSG_FOUND
-#  include "OSGWriter.h"
-#endif
 #include "CSVWriter.h"
+#include <iostream>
 
 
 Writer::Writer( const WriterType writerType )
@@ -20,18 +18,6 @@ WriterPtr Writer::create( const WriterType writerType )
 {
     switch( writerType )
     {
-    case OSG_WRITER:
-        {
-#ifdef OSG_FOUND
-            OSGWriterPtr writer( new OSGWriter() );
-            return( writer );
-#else
-            std::cerr << "Writer::create(): OSG_WRITER disabled; no OSG support." << std::endl;
-            return( WriterPtr( (Writer*)NULL ) );
-#endif
-        }
-        break;
-
     case CSV_WRITER:
         {
             CSVWriterPtr writer( new CSVWriter() );
