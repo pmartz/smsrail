@@ -76,7 +76,6 @@ enable_testing()
 
 set( _projectIncludes
     "${PROJECT_SOURCE_DIR}/src/libsmsrail"
-    "${PROJECT_SOURCE_DIR}/src"
 )
 
 set( _projectLibraries
