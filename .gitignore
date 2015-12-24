@@ -1,3 +1,4 @@
 cm-run
 doc/doxyfile
 bld
+src/libsmsrail/Version.h

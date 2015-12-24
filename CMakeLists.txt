@@ -5,6 +5,12 @@
 cmake_minimum_required( VERSION 2.8.5 )
 project( smsrail )
 
+set( SMSRAIL_VERION 0.00.00 )
+set( SMSRAIL_MAJOR_VERSION 0 )
+set( SMSRAIL_MINOR_VERSION 0 )
+set( SMSRAIL_SUB_VERSION 0 )
+
+
 set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
 include( CMakeMacros )
 
