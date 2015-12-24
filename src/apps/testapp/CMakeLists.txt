@@ -1,3 +1,3 @@
 _addExecutable( App testapp
-    main.cpp
+    main.c
 )

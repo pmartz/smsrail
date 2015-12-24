@@ -4,7 +4,7 @@
 #define __SMSRAIL_WRITER_H__ 1
 
 
-#include <Export.h>
+#include <export.h>
 #include <types.h>
 
 

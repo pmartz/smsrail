@@ -3,29 +3,16 @@
 #
 
 cmake_minimum_required( VERSION 2.8.5 )
-project( smsrail )
-
-
-macro( zeroPad _input _output )
-    if( ${${_input}} LESS 10 )
-        set( ${_output} "0${${_input}}" )
-    else()
-        set( ${_output} "${${_input}}" )
-    endif()
-endmacro()
-
-set( SMSRAIL_MAJOR_VERSION 0 )
-set( SMSRAIL_MINOR_VERSION 0 )
-set( SMSRAIL_SUB_VERSION 0 )
-zeroPad( SMSRAIL_MINOR_VERSION __minorPad )
-zeroPad( SMSRAIL_SUB_VERSION __subPad )
-set( SMSRAIL_VERSION ${SMSRAIL_MAJOR_VERSION}.${__minorPad}.${__subPad} )
-
-
 set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
 include( CMakeMacros )
 
+_projectName( smsrail )
 
+_projectVersion( 0 1 0 ZEROPAD
+    HEADER_SOURCE ${PROJECT_SOURCE_DIR}/src/libsmsrail/version.h.in
+    HEADER_DEST ${PROJECT_SOURCE_DIR}/src/libsmsrail/version.h )
+
+    
 # Installation directories
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
@@ -62,22 +49,8 @@ endif()
 #
 # Optional Doxygen, for documentation.
 # add a custom target to build documentation.
-option( SMSRAIL_DOCUMENTATION "Enable to create build target for Doxygen documentation." OFF )
-mark_as_advanced( CLEAR SMSRAIL_DOCUMENTATION )
-if( SMSRAIL_DOCUMENTATION )
-    find_package( Doxygen REQUIRED )
-    set( HAVE_DOT "NO" )
-    if( DOXYGEN_DOT_PATH )
-        set( HAVE_DOT "YES" )
-    endif( DOXYGEN_DOT_PATH )
-
-    configure_file( ${PROJECT_SOURCE_DIR}/doc/doxyfile.cmake
-        ${PROJECT_BINARY_DIR}/doc/doxyfile
-    )
-    add_custom_target( Documentation ${DOXYGEN_EXECUTABLE}
-        ${PROJECT_BINARY_DIR}/doc/doxyfile
-    )
-endif()
+_doxygen(
+    DOXYFILE_SOURCE ${PROJECT_SOURCE_DIR}/doc/doxyfile.in )
 
 
 #

@@ -1,13 +1,8 @@
 
-configure_file( "Version.h.in"
-    "${PROJECT_SOURCE_DIR}/src/libsmsrail/Version.h"
-    @ONLY )
-
 _addLibrary( smsrail
     types.h
-    Export.h
-    Version.cpp
-    Version.h
+    export.h
+    version.h
     CSV.cpp
     CSV.h
     CSVWriter.cpp
