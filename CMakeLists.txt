@@ -5,10 +5,21 @@
 cmake_minimum_required( VERSION 2.8.5 )
 project( smsrail )
 
-set( SMSRAIL_VERION 0.00.00 )
+
+macro( zeroPad _input _output )
+    if( ${${_input}} LESS 10 )
+        set( ${_output} "0${${_input}}" )
+    else()
+        set( ${_output} "${${_input}}" )
+    endif()
+endmacro()
+
 set( SMSRAIL_MAJOR_VERSION 0 )
 set( SMSRAIL_MINOR_VERSION 0 )
 set( SMSRAIL_SUB_VERSION 0 )
+zeroPad( SMSRAIL_MINOR_VERSION __minorPad )
+zeroPad( SMSRAIL_SUB_VERSION __subPad )
+set( SMSRAIL_VERSION ${SMSRAIL_MAJOR_VERSION}.${__minorPad}.${__subPad} )
 
 
 set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
@@ -47,9 +58,6 @@ if( BOOST_ALL_DYN_LINK )
     set( USE_BOOST_DEFINITION "add_definitions( -DBOOST_ALL_DYN_LINK )" )
 endif()
 
-#
-# Optional dependencies.
-
 
 #
 # Optional Doxygen, for documentation.
@@ -72,11 +80,18 @@ if( SMSRAIL_DOCUMENTATION )
 endif()
 
 
+#
+# Installation of data files is optional and off by default.
+option( SMSRAIL_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
+if( SMSRAIL_INSTALL_DATA )
+    add_subdirectory( data )
+endif()
+
 
 #
 # By default, build shared libraries.
 set( BUILD_SHARED_LIBS ON CACHE BOOL "Build shared or static libs" )
-
+    
 if( WIN32 )
     # Common debug postfix for Windows.
     set( CMAKE_DEBUG_POSTFIX d )
