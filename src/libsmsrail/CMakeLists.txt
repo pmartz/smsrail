@@ -3,7 +3,7 @@ configure_file( "Version.h.in"
     "${PROJECT_SOURCE_DIR}/src/libsmsrail/Version.h"
     @ONLY )
 
-_addLibrary( libsmsrail
+_addLibrary( smsrail
     types.h
     Export.h
     Version.cpp

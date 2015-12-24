@@ -107,7 +107,7 @@ set( _projectIncludes
 )
 
 set( _projectLibraries
-    libsmsrail
+    smsrail
 )
 
 set( _dependencyIncludes
