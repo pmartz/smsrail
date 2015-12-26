@@ -13,10 +13,11 @@ _projectVersion( 0 1 0 ZEROPAD
     HEADER_DEST ${PROJECT_SOURCE_DIR}/src/libsmsrail/version.h )
 
     
-# Installation directories
+# Build and installation directories
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
+include( InstallDirs )
 
 
 if( WIN32 AND MSVC )
@@ -77,7 +78,6 @@ enable_testing()
 set( _projectIncludes
     "${PROJECT_SOURCE_DIR}/src/libsmsrail"
 )
-
 set( _projectLibraries
     smsrail
 )
@@ -85,7 +85,6 @@ set( _projectLibraries
 set( _dependencyIncludes
     ${Boost_INCLUDE_DIR}
 )
-
 set( _dependencyLibraries
     ${Boost_LIBRARIES}
 )
@@ -106,3 +105,35 @@ if( MSVC )
         FILES_MATCHING PATTERN "*.pdb"
     )
 endif()
+
+
+#
+# Create and install all of the auto find tools
+# =============================================
+
+# Add all targets to the build-tree export set
+set( VES_EXPORT_LIBRARY_TARGETS ${_projectLibraries} )
+message( "dbg ${VES_EXPORT_LIBRARY_TARGETS}" )
+message( "dbg ${PROJECT_BINARY_DIR}/lib/${CMAKE_PROJECT_NAME}LibraryDepends.cmake" )
+export( TARGETS ${VES_EXPORT_LIBRARY_TARGETS}
+    FILE "${PROJECT_BINARY_DIR}/lib/${CMAKE_PROJECT_NAME}LibraryDepends.cmake" )
+
+include( InstallAutoDiscoveryTools )
+
+#
+# Setup the fpc auto detection files
+if(WIN32)
+    set(${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "/libpath:\"\${libdir}\" ${CMAKE_PROJECT_NAME}.lib")
+    set(${CMAKE_PROJECT_NAME}_FPC_INCLUDES "/I\"\${includedir}\"")
+else(WIN32)
+    set(${CMAKE_PROJECT_NAME}_FPC_INCLUDES "-I\${includedir}")
+    set(${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "-L\${libdir} -l${CMAKE_PROJECT_NAME}")
+endif(WIN32)
+set(latticefx_VERSION "${LATTICEFX_VERSION}")
+
+configure_file( ${PROJECT_SOURCE_DIR}/CMakeModules/fpc.in
+  "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc
+        DESTINATION lib/flagpoll )
+
