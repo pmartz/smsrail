@@ -3,8 +3,9 @@
 #
 
 cmake_minimum_required( VERSION 2.8.5 )
-set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
-include( CMakeMacros )
+set( _supportDir ${PROJECT_SOURCE_DIR}/CMakeSupport )
+set( CMAKE_MODULE_PATH ${_supportDir} ${CMAKE_MODULE_PATH} )
+include( Support )
 
 _projectName( smsrail )
 
@@ -113,8 +114,6 @@ endif()
 
 # Add all targets to the build-tree export set
 set( VES_EXPORT_LIBRARY_TARGETS ${_projectLibraries} )
-message( "dbg ${VES_EXPORT_LIBRARY_TARGETS}" )
-message( "dbg ${PROJECT_BINARY_DIR}/lib/${CMAKE_PROJECT_NAME}LibraryDepends.cmake" )
 export( TARGETS ${VES_EXPORT_LIBRARY_TARGETS}
     FILE "${PROJECT_BINARY_DIR}/lib/${CMAKE_PROJECT_NAME}LibraryDepends.cmake" )
 
@@ -131,7 +130,7 @@ else(WIN32)
 endif(WIN32)
 set(latticefx_VERSION "${LATTICEFX_VERSION}")
 
-configure_file( ${PROJECT_SOURCE_DIR}/CMakeModules/fpc.in
+configure_file( ${_supportDir}/fpc.in
   "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc

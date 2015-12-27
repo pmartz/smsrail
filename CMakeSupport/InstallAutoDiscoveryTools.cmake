@@ -16,17 +16,17 @@ endif()
 export(PACKAGE ${PROJECT_NAME})
 
 # Create a storytellerBuildTreeSettings.cmake file for the use from the build tree
-configure_file(${PROJECT_SOURCE_DIR}/CMakeModules/PackageBuildTreeSettings.cmake.in
+configure_file(${_supportDir}/PackageBuildTreeSettings.cmake.in
     "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}BuildTreeSettings.cmake" @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/CMakeModules/PackageConfigVersion.cmake.in
+configure_file(${_supportDir}/PackageConfigVersion.cmake.in
     "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}ConfigVersion.cmake" @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/CMakeModules/UsePackage.cmake.in
+configure_file(${_supportDir}/UsePackage.cmake.in
     "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/Use${PROJECT_NAME}.cmake" @ONLY)
 
 include(CMakePackageConfigHelpers)
 # Create the storytellerConfig.cmake and storytellerConfigVersion files
 configure_package_config_file( 
-    ${PROJECT_SOURCE_DIR}/CMakeModules/PackageConfig.cmake.in 
+    ${_supportDir}/PackageConfig.cmake.in 
         ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PATH_VARS ${VES_CONFIGURE_VARS})
@@ -38,7 +38,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME
         COMPONENT development)
 
 # Install the CMake find script for storyteller
-configure_file(${PROJECT_SOURCE_DIR}/CMakeModules/FindPackage.cmake.in
+configure_file(${_supportDir}/FindPackage.cmake.in
     "${PROJECT_BINARY_DIR}/Find${PROJECT_NAME}.cmake" @ONLY)
 install(FILES "${PROJECT_BINARY_DIR}/Find${PROJECT_NAME}.cmake"
     DESTINATION "share/${PROJECT_NAME}/extra"
