@@ -97,7 +97,6 @@ endmacro()
 # as ${_projectNameUpper}_VERSION, but with no intervening periods ("301" or
 # "30001" when ZEROPAD is specified.)
 #
-# TBD install?
 macro( _projectVersion _maj _min _sub )
     if( NOT _projectNameUpper )
         message( WARNING "_projectVersion: _projectNameUpper not set. You must invoke _projectName(...) before _projectVersion(...)." )
@@ -140,6 +139,7 @@ macro( _outputDirs )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 endmacro()
+
 
 #
 # _installDirs
@@ -257,19 +257,11 @@ macro( _addLibrary _libName )
     )
 
     # Add the library to the install target.
-    # TBD use global variables for these directories.
-    if( WIN32 )
-        set( INSTALL_LIBDIR bin )
-        set( INSTALL_ARCHIVEDIR lib )
-    else()
-        set( INSTALL_LIBDIR lib${LIB_POSTFIX} )
-        set( INSTALL_ARCHIVEDIR lib${LIB_POSTFIX} )
-    endif()
     install(
         TARGETS ${_libName}
         EXPORT ${CMAKE_PROJECT_NAME}-targets
-        LIBRARY DESTINATION ${INSTALL_LIBDIR} COMPONENT ${CMAKE_PROJECT_NAME}
-        ARCHIVE DESTINATION ${INSTALL_ARCHIVEDIR} COMPONENT ${CMAKE_PROJECT_NAME}-dev
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT ${CMAKE_PROJECT_NAME}
+        ARCHIVE DESTINATION ${_installArchiveDir} COMPONENT ${CMAKE_PROJECT_NAME}-dev
     )
 
     # Install headers
@@ -287,6 +279,9 @@ macro( _addLibrary _libName )
 endmacro()
 
 
+#
+# _addExecutable
+#
 macro( _addExecutable CATAGORY _exeName )
     add_executable( ${_exeName} ${ARGN} )
 
@@ -302,14 +297,19 @@ macro( _addExecutable CATAGORY _exeName )
 
     install(
         TARGETS ${_exeName}
-        RUNTIME DESTINATION bin COMPONENT smsrail
+        RUNTIME DESTINATION bin
+        COMPONENT ${CMAKE_PROJECT_NAME}
     )
 
-    set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${CATAGORY} ${_exeName}" )
-    set_property( TARGET ${_exeName} PROPERTY DEBUG_OUTPUT_NAME "${_exeName}${CMAKE_DEBUG_POSTFIX}" )
+    set_target_properties( ${_exeName}
+        PROPERTIES PROJECT_LABEL "${CATAGORY} ${_exeName}" )
+    set_property( TARGET ${_exeName}
+        PROPERTY DEBUG_OUTPUT_NAME "${_exeName}${CMAKE_DEBUG_POSTFIX}" )
 endmacro()
 
 
+#
+# _windowsInstallPDB
 #
 # Install pdb files for Debug and RelWithDebInfo builds
 macro( _windowsInstallPDB )

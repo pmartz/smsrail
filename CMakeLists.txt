@@ -55,8 +55,8 @@ _doxygen(
 
 #
 # Installation of data files is optional and off by default.
-option( SMSRAIL_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
-if( SMSRAIL_INSTALL_DATA )
+option( ${_projectNameUpper}_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
+if( ${_projectNameUpper}_INSTALL_DATA )
     add_subdirectory( data )
 endif()
 
