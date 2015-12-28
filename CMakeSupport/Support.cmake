@@ -130,15 +130,32 @@ endmacro()
 
 
 #
-# _outputToBinDir
+# _outputDirs
 #
 # Sets the CMake output directory variables so that executables,
 # libraries, and archives are all stored in a common bin directory.
 # This makes it easy to find all executable code built by the project.
-macro( _outputToBinDir )
+macro( _outputDirs )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
+endmacro()
+
+#
+# _installDirs
+#
+macro( _installDirs )
+    # Set defaults.
+    include( GNUInstallDirs )
+
+    # Additional install directory for plugins (I.e., OSG-style).
+    set( _installArchiveDir ${CMAKE_INSTALL_LIBDIR}
+        CACHE PATH "Install directory for plugins" )
+
+    # On Windows, no special directory for libraries.
+    if( WIN32 )
+        set( CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_BINDIR} )
+    endif()
 endmacro()
 
 

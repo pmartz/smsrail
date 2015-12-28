@@ -15,8 +15,8 @@ _projectVersion( 0 1 0 ZEROPAD
 
     
 # Build and installation directories
-_outputToBinDir()
-include( InstallDirs )
+_outputDirs()
+_installDirs()
 
 
 if( WIN32 AND MSVC )
