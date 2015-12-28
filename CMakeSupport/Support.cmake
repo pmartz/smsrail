@@ -54,6 +54,20 @@ endmacro()
 
 
 #
+# _listMemberAppend
+#
+# For each list element in _inList, prepend _prefix and
+# append _suffix, and store the result in _outList. This macro
+# does not modify _inList.
+#
+macro( _listMemberAppend _inList _outList _prefix _suffix )
+    foreach( _item ${${_inList}} )
+        list( APPEND ${_outList} ${_prefix}${_item}${_suffix} )
+    endforeach()
+endmacro()
+
+
+#
 # _projectName
 #
 # Sets the project name and creates an uppercase variant.
@@ -404,14 +418,25 @@ endmacro()
 # each for storing in _fpcLibraries. Right now, this works
 # if there is only one library.
 macro( _flagpoll )
+    set( _libPrefix )
+    set( _libSuffix )
     if( WIN32 )
-        set( _fpcLibraries "/libpath:${CMAKE_INSTALL_FULL_LIBDIR} ${_projectLibraries}.lib" )
+        set( _libSuffix ".lib" )
+        set( _fpcLibraries "/libpath:${CMAKE_INSTALL_FULL_LIBDIR} " )
         set( _fpcIncludes "/I${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
     else()
-        set( _fpcLibraries "-L${CMAKE_INSTALL_FULL_LIBDIR} -l${_projectLibraries}" )
+        set( _libPrefix "-l" )
+        set( _fpcLibraries "-L${CMAKE_INSTALL_FULL_LIBDIR} " )
         set( _fpcIncludes "-I${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
     endif()
 
+    # Apply prefix and suffix to libraries, convert the lib list
+    # to a space separated string, and append to _fpxLibraries.
+    _listMemberAppend( _projectLibraries _appended "${_libPrefix}" "${_libSuffix}" )
+    string( REPLACE ";" " " _outString "${_appended}" )
+    set( _fpcLibraries "${_fpcLibraries}${_outString}" )
+
+    # Expects _fpcLibraries and _fpxIncludes.
     configure_file( ${_supportDir}/fpc.in
         "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY )
 
