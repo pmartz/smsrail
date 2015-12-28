@@ -64,11 +64,6 @@ endif()
 #
 # By default, build shared libraries.
 set( BUILD_SHARED_LIBS ON CACHE BOOL "Build shared or static libs" )
-    
-if( WIN32 )
-    # Common debug postfix for Windows.
-    set( CMAKE_DEBUG_POSTFIX d )
-endif()
 
 
 enable_testing()
@@ -89,40 +84,17 @@ set( _dependencyLibraries
 )
 
 
+
 add_subdirectory( src )
 
 
 
-# 
-# Install management
-#
 # Install .pdb files for Windows builds
 _windowsInstallPDB()
 
+# Create and install auto-find tools
+_autoFindTools()
 
-#
-# Create and install all of the auto find tools
-# =============================================
-
-# Add all targets to the build-tree export set
-include( InstallAutoDiscoveryTools )
-
-
-#
-# Setup the fpc auto detection files
-if( WIN32 )
-    set( ${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "/libpath:\"\${libdir }\" ${CMAKE_PROJECT_NAME}.lib")
-    set( ${CMAKE_PROJECT_NAME}_FPC_INCLUDES "/I\"\${includedir}\"" )
-else()
-    set( ${CMAKE_PROJECT_NAME}_FPC_INCLUDES "-I\${includedir}" )
-    set( ${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "-L\${libdir} -l${CMAKE_PROJECT_NAME}" )
-endif()
-# TBD
-set( latticefx_VERSION "${LATTICEFX_VERSION}" )
-
-configure_file( ${_supportDir}/fpc.in
-    "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY )
-
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc
-         DESTINATION lib/flagpoll )
+# flagpoll auto detection support
+_flagpoll()
 

@@ -3,13 +3,13 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: latticefx
-Description: latticefx release pre-compiled for VES
-Provides: latticefx
+Name: @CMAKE_PROJECT_NAME@
+Description: @CMAKE_PROJECT_NAME@ release pre-compiled
+Provides: @CMAKE_PROJECT_NAME@
 Requires:
-Version: @latticefx_VERSION@
-Libs: @latticefx_FPC_LIBRARIES@
-Cflags: @latticefx_FPC_INCLUDES@
+Version: @PACKAGE_VERSION@
+Libs: @_fpcLibraries@
+Cflags: @_fpcIncludes@
 Arch: noarch
 
 
