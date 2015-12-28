@@ -18,7 +18,7 @@ endmacro()
 # _listGet
 #
 # If _keyword is present in ${ARGN}, _result is set to
-# the the following space-delimited token. If there is no
+# the following space-delimited token. If there is no
 # following token, a warning is displayed and _result is unchanged.
 # If _keyword is not found, no action is taken.
 macro( _listGet _keyword _result )
@@ -199,7 +199,12 @@ endmacro()
 # _addLibrary
 #
 # If FORCE_STATIC is present, _addLibrary creates an archive
-# rather than a library (a .lib rather than a .so).
+# rather than a library (a .lib rather than a .so). This happens
+# regardless of the value of BUILD_SHARED_LIBS.
+#
+# TBD Need to add support for one project library linking
+# against another. Right now, target_link_libraries links against
+# only dependency libraries.
 #
 macro( _addLibrary _libName )
     # Check to see if we are forcing a static library.
@@ -216,20 +221,41 @@ macro( _addLibrary _libName )
         add_library( ${_libName} STATIC ${_optionsPlusFiles} )
     endif()
 
+    # Add "Lib" project label (for Visual Studio, primarily).
+    set_target_properties( ${_libName}
+        PROPERTIES PROJECT_LABEL "Lib ${_libName}" )
+
+    # Building. Include dirs and CPP definitions.
     include_directories(
         ${_projectIncludes}
         ${_dependencyIncludes}
     )
-    add_definitions( -DSMSRAIL_LIBRARY )
+    add_definitions( -D${_projectNameUpper}_LIBRARY )
 
+    # Libraries to link against.
+    # TBD need to support one library linking against another
+    # from the same project.
     target_link_libraries( ${_libName}
         ${_dependencyLibraries}
     )
 
-    set_target_properties( ${_libName} PROPERTIES PROJECT_LABEL "Lib ${_libName}" )
+    # Add the library to the install target.
+    # TBD use global variables for these directories.
+    if( WIN32 )
+        set( INSTALL_LIBDIR bin )
+        set( INSTALL_ARCHIVEDIR lib )
+    else()
+        set( INSTALL_LIBDIR lib${LIB_POSTFIX} )
+        set( INSTALL_ARCHIVEDIR lib${LIB_POSTFIX} )
+    endif()
+    install(
+        TARGETS ${_libName}
+        EXPORT ${CMAKE_PROJECT_NAME}-targets
+        LIBRARY DESTINATION ${INSTALL_LIBDIR} COMPONENT ${CMAKE_PROJECT_NAME}
+        ARCHIVE DESTINATION ${INSTALL_ARCHIVEDIR} COMPONENT ${CMAKE_PROJECT_NAME}-dev
+    )
 
-    set( _libName ${_libName} )
-    include( ModuleInstall REQUIRED )
+    # Install headers
     install(
         DIRECTORY .
         DESTINATION include/${_libName}
