@@ -57,10 +57,13 @@ endmacro()
 # _projectName
 #
 # Sets the project name and creates an uppercase variant.
-# CMAKE_PROJECT_NAME is set to the given _name.
-# _projectNameUpper it set to _name comverted to uppercase.
+#   CMAKE_PROJECT_NAME is set to the given _name.
+#   PROJECT_NAME is set to the given _name.
+#   _projectNameUpper it set to _name comverted to uppercase.
 macro( _projectName _name )
+    # project() implicitly sets CMAKE_PROJECT_NAME and PROJECT_NAME
     project( ${_name} )
+    # set _projectNameUpper
     string( TOUPPER ${_name} _projectNameUpper )
 endmacro()
 
@@ -127,20 +130,15 @@ endmacro()
 
 
 #
-# _useBinLibStructure
+# _outputToBinDir
 #
-# Sets the CMake variables that control the location of project
-# executables, libraries, and plugins.
-macro( _useBinLibStructure )
+# Sets the CMake output directory variables so that executables,
+# libraries, and archives are all stored in a common bin directory.
+# This makes it easy to find all executable code built by the project.
+macro( _outputToBinDir )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
-    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
-    if( WIN32 )
-        # Libraries (DLLs) go where executables go.
-        set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-    else()
-        # Libraries (SOs) go where stub libs go.
-        set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
-    endif()
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 endmacro()
 
 
@@ -200,7 +198,10 @@ endmacro()
 #
 # _addLibrary
 #
-macro( _addLibrary TRGTNAME )
+# If FORCE_STATIC is present, _addLibrary creates an archive
+# rather than a library (a .lib rather than a .so).
+#
+macro( _addLibrary _libName )
     # Check to see if we are forcing a static library.
     set( _optionsPlusFiles ${ARGN} )
     list( GET _optionsPlusFiles 0 _option )
@@ -210,9 +211,9 @@ macro( _addLibrary TRGTNAME )
     endif()
 
     if( BUILD_SHARED_LIBS AND NOT ( _option STREQUAL "FORCE_STATIC" ) )
-        add_library( ${TRGTNAME} SHARED ${_optionsPlusFiles} )
+        add_library( ${_libName} SHARED ${_optionsPlusFiles} )
     else()
-        add_library( ${TRGTNAME} STATIC ${_optionsPlusFiles} )
+        add_library( ${_libName} STATIC ${_optionsPlusFiles} )
     endif()
 
     include_directories(
@@ -221,17 +222,17 @@ macro( _addLibrary TRGTNAME )
     )
     add_definitions( -DSMSRAIL_LIBRARY )
 
-    target_link_libraries( ${TRGTNAME}
+    target_link_libraries( ${_libName}
         ${_dependencyLibraries}
     )
 
-    set_target_properties( ${TRGTNAME} PROPERTIES PROJECT_LABEL "Lib ${TRGTNAME}" )
+    set_target_properties( ${_libName} PROPERTIES PROJECT_LABEL "Lib ${_libName}" )
 
-    set( _libName ${TRGTNAME} )
+    set( _libName ${_libName} )
     include( ModuleInstall REQUIRED )
     install(
         DIRECTORY .
-        DESTINATION include/${TRGTNAME}
+        DESTINATION include/${_libName}
         USE_SOURCE_PERMISSIONS
         FILES_MATCHING 
         PATTERN "*.h"
@@ -243,24 +244,40 @@ macro( _addLibrary TRGTNAME )
 endmacro()
 
 
-macro( _addExecutable CATAGORY EXENAME )
-    add_executable( ${EXENAME} ${ARGN} )
+macro( _addExecutable CATAGORY _exeName )
+    add_executable( ${_exeName} ${ARGN} )
 
     include_directories(
         ${_projectIncludes}
         ${_dependencyIncludes}
     )
 
-    target_link_libraries( ${EXENAME}
+    target_link_libraries( ${_exeName}
         ${_projectLibraries}
         ${_dependencyLibraries}
     )
 
     install(
-        TARGETS ${EXENAME}
+        TARGETS ${_exeName}
         RUNTIME DESTINATION bin COMPONENT smsrail
     )
 
-    set_target_properties( ${EXENAME} PROPERTIES PROJECT_LABEL "${CATAGORY} ${EXENAME}" )
-    set_property( TARGET ${EXENAME} PROPERTY DEBUG_OUTPUT_NAME "${EXENAME}${CMAKE_DEBUG_POSTFIX}" )
+    set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${CATAGORY} ${_exeName}" )
+    set_property( TARGET ${_exeName} PROPERTY DEBUG_OUTPUT_NAME "${_exeName}${CMAKE_DEBUG_POSTFIX}" )
 endmacro()
+
+
+#
+# Install pdb files for Debug and RelWithDebInfo builds
+macro( _windowsInstallPDB )
+    if( MSVC )
+        install(
+            DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CMAKE_INSTALL_CONFIG_NAME}/
+            DESTINATION lib
+            USE_SOURCE_PERMISSIONS
+            COMPONENT ${CMAKE_PROJECT_NAME}-dev
+            FILES_MATCHING PATTERN "*.pdb"
+        )
+    endif()
+endmacro()
+

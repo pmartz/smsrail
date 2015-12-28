@@ -4,10 +4,10 @@
 
 # Add all targets to the build-tree export set
 if( EXISTS "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}LibraryDepends.cmake" )
-    export(TARGETS ${VES_EXPORT_LIBRARY_TARGETS} APPEND
+    export( TARGETS ${_projectLibraries} APPEND
         FILE "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}LibraryDepends.cmake")
 else()
-    export(TARGETS ${VES_EXPORT_LIBRARY_TARGETS}
+    export( TARGETS ${_projectLibraries}
         FILE "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}LibraryDepends.cmake")
 endif()
 
@@ -46,7 +46,9 @@ install(FILES "${PROJECT_BINARY_DIR}/Find${PROJECT_NAME}.cmake"
     #RENAME Find${PROJECT_NAME}.cmake)
 
 # Install the export set for use with the install-tree
-install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development)
+install( EXPORT ${PROJECT_NAME}-targets
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT development )
 
 #setup the fpc variables for the fpc file creation
 set(VES_FPC_PREFIX "\${fp_file_cwd}/../..")

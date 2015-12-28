@@ -15,9 +15,7 @@ _projectVersion( 0 1 0 ZEROPAD
 
     
 # Build and installation directories
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
+_outputToBinDir()
 include( InstallDirs )
 
 
@@ -95,17 +93,11 @@ add_subdirectory( src )
 
 
 
+# 
+# Install management
 #
-# Install pdb files for Debug and RelWithDebInfo builds
-if( MSVC )
-    install(
-        DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CMAKE_INSTALL_CONFIG_NAME}/
-        DESTINATION lib
-        USE_SOURCE_PERMISSIONS
-        COMPONENT smsrail-dev
-        FILES_MATCHING PATTERN "*.pdb"
-    )
-endif()
+# Install .pdb files for Windows builds
+_windowsInstallPDB()
 
 
 #
@@ -113,10 +105,6 @@ endif()
 # =============================================
 
 # Add all targets to the build-tree export set
-set( VES_EXPORT_LIBRARY_TARGETS ${_projectLibraries} )
-export( TARGETS ${VES_EXPORT_LIBRARY_TARGETS}
-    FILE "${PROJECT_BINARY_DIR}/lib/${CMAKE_PROJECT_NAME}LibraryDepends.cmake" )
-
 include( InstallAutoDiscoveryTools )
 
 #
