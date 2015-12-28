@@ -86,12 +86,17 @@ endmacro()
 #   ${_projectNameUpper}_MINOR_VERSION to "${_min}"
 #   ${_projectNameUpper}_SUB_VERSION to "${_sub}"
 #
+# This macro sets PACKAGE_VERION to "${_maj}.${_min}.${_sub}".
+# This variable is used during creation of the auto-find tools.
+#
 # This macro also sets a variable called ${_projectNameUpper}_VERSION, which
 # contains a combined version number. The setting of this variable is
 # controlled with the presence of ZEROPAD. If not present,
 # ${_projectNameUpper}_VERSION is set to "${_maj}.${_min}.${_sub}". If
 # ZEROPAD is present, _min and _sub are zero-padded to two digits. (Compare:
 # "3.0.1" or "3.00.01" when ZEROPAD is specified.)
+# Note that is ZEROPAD is absent, PACKAGE_VERION will have the
+# same value as ${_projectNameUpper}_VERSION
 #
 # This macro also sets ${_projectNameUpper}_VERSION_COMPACT in the same way
 # as ${_projectNameUpper}_VERSION, but with no intervening periods ("301" or
@@ -117,6 +122,7 @@ macro( _projectVersion _maj _min _sub )
         _zeroPad( _subPad _subPad )
     endif()
 
+    set( PACKAGE_VERSION "${_maj}.${_min}.${_sub}" )
     set( ${_projectNameUpper}_VERSION "${_maj}.${_minorPad}.${_subPad}" )
     set( ${_projectNameUpper}_VERSION_COMPACT "${_maj}${_minorPad}${_subPad}" )
 

@@ -107,20 +107,22 @@ _windowsInstallPDB()
 # Add all targets to the build-tree export set
 include( InstallAutoDiscoveryTools )
 
+
 #
 # Setup the fpc auto detection files
-if(WIN32)
-    set(${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "/libpath:\"\${libdir}\" ${CMAKE_PROJECT_NAME}.lib")
-    set(${CMAKE_PROJECT_NAME}_FPC_INCLUDES "/I\"\${includedir}\"")
-else(WIN32)
-    set(${CMAKE_PROJECT_NAME}_FPC_INCLUDES "-I\${includedir}")
-    set(${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "-L\${libdir} -l${CMAKE_PROJECT_NAME}")
-endif(WIN32)
-set(latticefx_VERSION "${LATTICEFX_VERSION}")
+if( WIN32 )
+    set( ${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "/libpath:\"\${libdir }\" ${CMAKE_PROJECT_NAME}.lib")
+    set( ${CMAKE_PROJECT_NAME}_FPC_INCLUDES "/I\"\${includedir}\"" )
+else()
+    set( ${CMAKE_PROJECT_NAME}_FPC_INCLUDES "-I\${includedir}" )
+    set( ${CMAKE_PROJECT_NAME}_FPC_LIBRARIES "-L\${libdir} -l${CMAKE_PROJECT_NAME}" )
+endif()
+# TBD
+set( latticefx_VERSION "${LATTICEFX_VERSION}" )
 
 configure_file( ${_supportDir}/fpc.in
-  "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY)
+    "${PROJECT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc" @ONLY )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc
-        DESTINATION lib/flagpoll )
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/${CMAKE_PROJECT_NAME}.fpc
+         DESTINATION lib/flagpoll )
 
